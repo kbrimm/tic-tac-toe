@@ -2,8 +2,10 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/kbrimm/tic-tac-toe/controllers"
@@ -11,18 +13,18 @@ import (
 )
 
 func main() {
-	fmt.Println("===== Tic Tac Toe =====")
-	fmt.Println("This interface is fairly naive. It assumes you will supply")
-	fmt.Println("reasonable input, and doesn't do too much error checking.")
-	fmt.Println("            ==================================            ")
+	fmt.Println("                     ===== Tic Tac Toe =====")
+	fmt.Println("\nText-based tic-tac-toe, because the console never goes out of style.")
+	fmt.Println("               ==================================")
 	fmt.Println("You can always type 'new' to start a new game or 'exit' to quit.")
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		for {
 			var game models.Game
-			fmt.Println("Player 1: 'x' or 'o'?")
+			fmt.Println("\nPlayer 1: 'x' or 'o'?")
 			input, _ := reader.ReadString('\n')
-			response, new, exit := readInput(input)
+			input, new, exit := parseInput(input)
+
 			if new {
 				fmt.Println("Starting a new game...")
 				break
@@ -30,27 +32,85 @@ func main() {
 				fmt.Println("Goodbye!")
 				os.Exit(0)
 			}
-			if response == 'x' || response == 'o' {
-				game = controllers.StartNewGame(response)
+
+			markChoice := []rune(input)[0]
+			if markChoice == 'x' || markChoice == 'o' {
+				game = controllers.StartNewGame(markChoice)
+			} else {
+				break
 			}
+
 			fmt.Printf("%+v\n", game)
-			game, _ = controllers.PlaceMark(game, 1, 1)
-			fmt.Printf("%+v\n", game)
+			fmt.Print("Where will you make your mark? (ex. A3): ")
+			for {
+				input, _ = reader.ReadString('\n')
+				input, new, exit = parseInput(input)
+				if new {
+					fmt.Println("Starting a new game...")
+					break
+				} else if exit {
+					fmt.Println("Goodbye!")
+					os.Exit(0)
+				}
+				row, col, err := getCoordinates(input)
+				if err != nil {
+					fmt.Println(err)
+					continue
+				}
+				game, err = controllers.PlaceMark(game, row, col)
+				fmt.Printf("%+v\n", game)
+				if err != nil {
+					fmt.Println(err)
+				}
+				winner, win, stalemate := controllers.ScoreGame(game)
+				if win {
+					fmt.Println(fmt.Sprintf("Congratulations! Player '%c' wins!", winner))
+					break
+				} else if stalemate {
+					fmt.Println("Stalemate!")
+					break
+				}
+				fmt.Print("Where will you make your mark? (ex. A3): ")
+			}
 		}
 	}
 }
 
-func readInput(input string) (rune, bool, bool) {
+func parseInput(input string) (string, bool, bool) {
 	input = strings.TrimRight(input, "\r\n")
 	if input == "new" {
-		return ' ', true, false
+		return "", true, false
 	} else if input == "exit" {
-		return ' ', false, true
+		return "", false, true
 	} else {
-		return []rune(strings.ToLower(input))[0], false, false
+		return strings.ToLower(input), false, false
 	}
 }
 
-func getFirstChar(str string) rune {
-	return []rune(str)[0]
+func getCoordinates(str string) (row int, col int, err error) {
+	validCoords, _ := regexp.Compile(`^[abc][1-3]$`)
+	if validCoords.MatchString(str) {
+		var rowInt, colInt int
+		rowRune := []rune(str)[0]
+		switch rowRune {
+		case 'a':
+			rowInt = 0
+		case 'b':
+			rowInt = 1
+		case 'c':
+			rowInt = 2
+		}
+
+		colRune := []rune(str)[1]
+		switch colRune {
+		case '1':
+			colInt = 0
+		case '2':
+			colInt = 1
+		case '3':
+			colInt = 2
+		}
+		return rowInt, colInt, nil
+	}
+	return 0, 0, errors.New("input error: invalid grid coordinates")
 }

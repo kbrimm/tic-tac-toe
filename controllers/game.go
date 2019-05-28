@@ -41,16 +41,14 @@ func switchCurrentMark(mark rune) rune {
 }
 
 // ScoreGame - evaluates the current board for end-game conditions
-func ScoreGame(game models.Game) (stalemate bool, win bool, winner rune) {
+func ScoreGame(game models.Game) (winner rune, win bool, stalemate bool) {
 	if checkWins('x', game.Board) {
-		return false, true, 'x'
+		return 'x', true, false
 	}
-
 	if checkWins('o', game.Board) {
-		return false, true, 'o'
+		return 'o', true, false
 	}
-
-	return checkStalemate(game.Board), false, ' '
+	return ' ', false, checkStalemate(game.Board)
 }
 
 func checkWins(mark rune, board [3][3]rune) bool {
@@ -60,14 +58,12 @@ func checkWins(mark rune, board [3][3]rune) bool {
 			return true
 		}
 	}
-
 	// Check columns
 	for i := 0; i < 3; i++ {
 		if mark == board[0][i] && mark == board[1][i] && mark == board[2][i] {
 			return true
 		}
 	}
-
 	// Check diagonals
 	if (mark == board[0][0] && mark == board[1][1] && mark == board[2][2]) ||
 		(mark == board[0][2] && mark == board[1][1] && mark == board[2][0]) {
@@ -79,37 +75,26 @@ func checkWins(mark rune, board [3][3]rune) bool {
 func checkStalemate(board [3][3]rune) bool {
 	// Check rows
 	for i := 0; i < 3; i++ {
-		if notBlocked(board[i][0], board[i][1]) &&
-			notBlocked(board[i][1], board[i][2]) &&
-			notBlocked(board[i][0], board[i][2]) {
+		if notBlocked(board[i][0], board[i][1], board[i][2]) {
 			return false
 		}
 	}
-
 	// Check columns
 	for i := 0; i < 3; i++ {
-		if notBlocked(board[0][i], board[1][i]) &&
-			notBlocked(board[1][i], board[2][i]) &&
-			notBlocked(board[0][i], board[2][i]) {
+		if notBlocked(board[0][i], board[1][i], board[2][i]) {
 			return false
 		}
 	}
-
 	// Check diagonals
-	if notBlocked(board[0][0], board[1][1]) &&
-		notBlocked(board[1][1], board[2][2]) &&
-		notBlocked(board[0][0], board[2][2]) {
-		return false
-	}
-
-	if notBlocked(board[0][2], board[1][1]) &&
-		notBlocked(board[0][2], board[2][0]) &&
-		notBlocked(board[1][1], board[0][2]) {
+	if notBlocked(board[0][0], board[1][1], board[2][2]) ||
+		notBlocked(board[0][2], board[1][1], board[2][0]) {
 		return false
 	}
 	return true
 }
 
-func notBlocked(markOne rune, markTwo rune) bool {
-	return markOne == ' ' || markTwo == ' ' || markOne == markTwo
+func notBlocked(markOne rune, markTwo rune, markThree rune) bool {
+	return (markOne == ' ' || markTwo == ' ' || markOne == markTwo) &&
+		(markOne == ' ' || markThree == ' ' || markOne == markThree) &&
+		(markThree == ' ' || markTwo == ' ' || markThree == markTwo)
 }

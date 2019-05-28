@@ -1,6 +1,6 @@
-# tic-tac-go
+# tic-tac-toe
 
-Most definitely not a coding exercise for a job interview.
+Most definitely not a coding exercise for an interview.
 
 ## Gameplay Basics
 
@@ -18,13 +18,13 @@ A player gets a designated token - 'x' or 'o' - which they can place on the boar
 
 Your implementation of the app should meet the following product requirements:
 
-- [ ] The game should have some kind of interface for user(s) to interact. (e.g. in the browser or on the command line)
-- [ ] It should enforce the basic rules and determine the end result of a game.
-- [ ] The user should be able to start the game
-- [ ] The user should be able to take alternate turns to play the game
-- [ ] The logic should be able to evaluate the winner
-- [ ] The user should be able to stop an ongoing game at any point
-- [ ] There should be proper messaging when the game changes the state
+- [x] The game should have some kind of interface for user(s) to interact. (e.g. in the browser or on the command line)
+- [x] It should enforce the basic rules and determine the end result of a game.
+- [x] The user should be able to start the game
+- [x] The user should be able to take alternate turns to play the game
+- [x] The logic should be able to evaluate the winner
+- [x] The user should be able to stop an ongoing game at any point
+- [x] There should be proper messaging when the game changes the state
 
 Details:
 

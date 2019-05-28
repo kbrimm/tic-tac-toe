@@ -39,7 +39,7 @@ func TestScoreGame(t *testing.T) {
 		{'o', 'x', 'x'},
 		{' ', 'o', ' '}}
 	game := models.Game{Board: board, CurrentMark: 'x'}
-	hasStalemate, hasWin, winningMark := ScoreGame(game)
+	winningMark, hasWin, hasStalemate := ScoreGame(game)
 	assert.False(t, hasStalemate, "stalemate condition detected incorrectly")
 	assert.False(t, hasWin, "win condition detected incorrectly")
 	assert.Equal(t, ' ', winningMark, "winner declared with no win condition")
@@ -49,7 +49,7 @@ func TestScoreGame(t *testing.T) {
 		{'x', 'x', 'x'},
 		{' ', 'o', ' '}}
 	game = models.Game{Board: board, CurrentMark: 'x'}
-	_, hasWin, winningMark = ScoreGame(game)
+	winningMark, hasWin, hasStalemate = ScoreGame(game)
 	assert.True(t, hasWin, "row win condition not detected")
 	assert.Equal(t, 'x', winningMark, "incorrect row winner declared")
 
@@ -58,7 +58,7 @@ func TestScoreGame(t *testing.T) {
 		{'x', 'o', 'x'},
 		{' ', 'o', ' '}}
 	game = models.Game{Board: board, CurrentMark: 'x'}
-	_, hasWin, winningMark = ScoreGame(game)
+	winningMark, hasWin, hasStalemate = ScoreGame(game)
 	assert.True(t, hasWin, "column win condition not detected")
 	assert.Equal(t, 'o', winningMark, "incorrect column winner declared")
 
@@ -67,7 +67,7 @@ func TestScoreGame(t *testing.T) {
 		{' ', 'o', 'x'},
 		{' ', ' ', 'o'}}
 	game = models.Game{Board: board, CurrentMark: 'x'}
-	_, hasWin, winningMark = ScoreGame(game)
+	winningMark, hasWin, hasStalemate = ScoreGame(game)
 	assert.True(t, hasWin, "diagonal win condition not detected")
 	assert.Equal(t, 'o', winningMark, "incorrect diagonal winner declared")
 
@@ -76,6 +76,6 @@ func TestScoreGame(t *testing.T) {
 		{'o', 'x', ' '},
 		{'x', 'o', 'x'}}
 	game = models.Game{Board: board, CurrentMark: 'x'}
-	hasStalemate, _, _ = ScoreGame(game)
-	assert.True(t, hasWin, "stalemate condition not detected")
+	winningMark, hasWin, hasStalemate = ScoreGame(game)
+	assert.True(t, hasStalemate, "stalemate condition not detected")
 }
