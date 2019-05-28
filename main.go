@@ -12,7 +12,10 @@ import (
 
 func main() {
 	fmt.Println("===== Tic Tac Toe =====")
-	fmt.Println("At any time you can type 'new' to start a new game or 'exit' to quit!")
+	fmt.Println("This interface is fairly naive. It assumes you will supply")
+	fmt.Println("reasonable input, and doesn't do too much error checking.")
+	fmt.Println("            ==================================            ")
+	fmt.Println("You can always type 'new' to start a new game or 'exit' to quit.")
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		for {
@@ -32,6 +35,7 @@ func main() {
 			}
 			fmt.Printf("%+v\n", game)
 			game, _ = controllers.PlaceMark(game, 1, 1)
+			fmt.Printf("%+v\n", game)
 		}
 	}
 }
